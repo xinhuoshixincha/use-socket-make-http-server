@@ -60,37 +60,53 @@ public class Server {
                         System.out.println("无参数");
                     }
 
+                    // 将参数取出
+                    if (params != null) {
+                        String[] split = params.split("&");
+                        // 将所有参数存储在map中
+                        for (String tem : split) {
+                            String[] split1 = tem.split("=");
+                            // 看是否已经存储重复的param key
+                            if (paramsMap.containsKey(split1[0])) {
+                                String value = paramsMap.get(split1[0]);
+                                paramsMap.replace(split1[0], value, value + "," + split1[1]);
+                            } else {
+                                paramsMap.put(split1[0], split1[1]);
+                            }
+                        }
+                    }
+                    String a = paramsMap.get("a");
+                    String b = paramsMap.get("b");
+
                     // 判断路由是不是/mult
                     if ("/mult".equals(router)) {
-                        if (params != null) {
-                            String[] split = params.split("&");
-                            // 将所有参数存储在map中
-                            for (String tem : split) {
-                                String[] split1 = tem.split("=");
-                                // 看是否已经存储重复的param key
-                                if (paramsMap.containsKey(split1[0])) {
-                                    String value = paramsMap.get(split1[0]);
-                                    paramsMap.replace(split1[0], value, value + "," + split1[1]);
-                                } else {
-                                    paramsMap.put(split1[0], split1[1]);
-                                }
+                        if (a == null || b == null) {
+                            System.out.println("缺少参数");
+                            message = "缺少参数";
+                        } else {
+                            try {
+                                BigInteger bigA = new BigInteger(a);
+                                BigInteger bigB = new BigInteger(b);
+                                result = bigA.multiply(bigB);
+                                message = "结果为" + result.toString();
+                            } catch (NumberFormatException e) {
+                                System.out.println("参数类型错误");
+                                message = "参数类型错误";
                             }
-
-                            String a = paramsMap.get("a");
-                            String b = paramsMap.get("b");
-                            if (a == null || b == null) {
-                                System.out.println("缺少参数");
-                                message = "缺少参数";
-                            } else {
-                                try {
-                                    BigInteger bigA = new BigInteger(a);
-                                    BigInteger bigB = new BigInteger(b);
-                                    result = bigA.multiply(bigB);
-                                    message = "结果为" + result.toString();
-                                } catch (NumberFormatException e) {
-                                    System.out.println("参数类型错误");
-                                    message = "参数类型错误";
-                                }
+                        }
+                    } else if ("/add".equals(router)) {
+                        if (a == null || b == null) {
+                            System.out.println("缺少参数");
+                            message = "缺少参数";
+                        } else {
+                            try {
+                                BigInteger bigA = new BigInteger(a);
+                                BigInteger bigB = new BigInteger(b);
+                                result = bigA.add(bigB);
+                                message = "结果为" + result.toString();
+                            } catch (NumberFormatException e) {
+                                System.out.println("参数类型错误");
+                                message = "参数类型错误";
                             }
                         }
                     } else {
